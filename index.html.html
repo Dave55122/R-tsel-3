@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Escape-Rätsel: Arbeit im 19. Jh.</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #authScreen, #mainContent, #result { display: none; }
+        .dropzone {
+            display: inline-block; width: 200px; height: 28px; border: 2px dashed #aaa;
+            margin: 0 4px; vertical-align: middle; text-align: center; line-height: 28px;
+        }
+        .wordlist { margin-top: 30px; }
+        .draggable {
+            display: inline-block; padding: 6px 10px; background: #f0f0f0;
+            margin: 6px; cursor: grab; border-radius: 6px; border: 1px solid #888;
+        }
+        #result {
+            margin-top: 30px; font-weight: bold; font-size: 20px; color: green;
+        }
+        input[type="text"] { padding: 6px; font-size: 16px; }
+        button { padding: 6px 12px; font-size: 16px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="authScreen">
+    <h2>Zugangscode erforderlich</h2>
+    <p>Nur wer das zentrale Thema dieses Kapitels kennt, darf das Rätsel lösen.</p>
+    <p>Gib das richtige Wort ein, um fortzufahren:</p>
+    <input type="text" id="accessInput" placeholder="Zugangscode eingeben">
+    <button onclick="checkAccess()">Freischalten</button>
+</div>
+
+<div id="mainContent">
+    <h2>Escape-Rätsel: Arbeit im 19. Jahrhundert</h2>
+    <p><strong>Anleitung:</strong> Zieht die richtigen Begriffe an die richtige Stelle im Lückentext. Nur wenn alle Begriffe richtig zugeordnet wurden, erscheint der dreistellige Lösungscode. <br><strong>Achtung:</strong> Es haben sich auch falsche Begriffe unter die richtigen geschummelt!</p>
+
+    <p>
+        Die Arbeitsrealität in der Fabrik ist geprägt durch <span class="dropzone" data-correct="lange Arbeitszeiten"></span>, sodass sich der gesamte Arbeitsablauf an den Maschinen orientieren muss.
+        Trotz gesundheitlicher Gefahren gibt es <span class="dropzone" data-correct="kaum Arbeitsschutz"></span>, was bereits zu schweren Unfällen geführt hat.
+        Auch eine berufliche Absicherung existiert nicht, da <span class="dropzone" data-correct="kein Kündigungsschutz"></span> bestand.
+        Zudem fehlen gesetzliche Regelungen: Es gab <span class="dropzone" data-correct="keine Ruhetage"></span>, selbst an Sonntagen.
+        Trotz der anstrengenden Arbeit erhalten viele Arbeiter:innen nur <span class="dropzone" data-correct="geringe Löhne"></span>, die gerade so ausreichen, um den Lebensunterhalt zu bestreiten.
+        Besonders auffällig ist dabei die Ungleichbehandlung von Männern und Frauen, die sich im <span class="dropzone" data-correct="Gender-Pay-Gap"></span> zeigt.
+        Besonders junge Menschen sind betroffen, da auch <span class="dropzone" data-correct="Kinderarbeit"></span> verbreitet war.
+        Die Einhaltung der strengen Regeln wurde durch <span class="dropzone" data-correct="Arbeitsdisziplinierung durch Fabrikordnung"></span> sichergestellt, wobei Strafen und Entlassungen bei Regelverstoß drohten.
+    </p>
+
+    <div class="wordlist">
+        <h3>Begriffsauswahl:</h3>
+        <div class="draggable" draggable="true">lange Arbeitszeiten</div>
+        <div class="draggable" draggable="true">keine Ruhetage</div>
+        <div class="draggable" draggable="true">geringe Löhne</div>
+        <div class="draggable" draggable="true">kaum Arbeitsschutz</div>
+        <div class="draggable" draggable="true">kein Kündigungsschutz</div>
+        <div class="draggable" draggable="true">Gender-Pay-Gap</div>
+        <div class="draggable" draggable="true">Kinderarbeit</div>
+        <div class="draggable" draggable="true">Arbeitsdisziplinierung durch Fabrikordnung</div>
+        <div class="draggable" draggable="true">Maschinenpausen</div>
+        <div class="draggable" draggable="true">Sabbatruhe</div>
+        <div class="draggable" draggable="true">geringe Vergünstigungen</div>
+        <div class="draggable" draggable="true">geringes Ansehen</div>
+        <div class="draggable" draggable="true">Arbeitsvertretung</div>
+        <div class="draggable" draggable="true">gesetzliche Pensionsregelung</div>
+        <div class="draggable" draggable="true">gesetzliche Krankenversicherungen</div>
+        <div class="draggable" draggable="true">Gender-Job-Gap</div>
+    </div>
+
+    <button onclick="checkSolution()">✅ Lösung prüfen</button>
+    <div id="result">Richtig! Der Lösungscode lautet: <strong>214</strong></div>
+</div>
+
+<script>
+    document.getElementById('authScreen').style.display = 'block';
+
+    function checkAccess() {
+        const input = document.getElementById('accessInput').value.trim().toLowerCase();
+        if (input === "arbeit") {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+        } else {
+            alert("Falscher Zugangscode.");
+        }
+    }
+
+    const draggables = document.querySelectorAll('.draggable');
+    const dropzones = document.querySelectorAll('.dropzone');
+    let dragged = null;
+
+    draggables.forEach(elem => {
+        elem.addEventListener('dragstart', e => { dragged = e.target; });
+    });
+
+    dropzones.forEach(zone => {
+        zone.addEventListener('dragover', e => e.preventDefault());
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            if (dragged) {
+                zone.textContent = dragged.textContent;
+                zone.dataset.value = dragged.textContent;
+            }
+        });
+    });
+
+    function checkSolution() {
+        let correct = 0;
+        dropzones.forEach(zone => {
+            if (zone.dataset.value === zone.dataset.correct) correct++;
+        });
+        if (correct === dropzones.length) {
+            document.getElementById('result').style.display = 'block';
+        } else {
+            alert("Noch nicht korrekt. Überprüfe deine Zuordnungen.");
+        }
+    }
+</script>
+
+</body>
+</html>
